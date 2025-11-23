@@ -8,7 +8,11 @@ interface WeatherData {
   location: string;
 }
 
-function WeatherWidget() {
+interface WeatherWidgetProps {
+  onWeatherUpdate?: (description: string) => void;
+}
+
+function WeatherWidget({ onWeatherUpdate }: WeatherWidgetProps) {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,12 +57,38 @@ function WeatherWidget() {
 
             const data = await response.json();
             
-            setWeather({
+            const weatherData = {
               temperature: Math.round(data.main.temp),
               condition: data.weather[0].main,
               icon: data.weather[0].icon,
               location: data.name,
-            });
+            };
+            setWeather(weatherData);
+            
+            // Generate weather description for greeting
+            if (onWeatherUpdate) {
+              const temp = weatherData.temperature;
+              const condition = weatherData.condition.toLowerCase();
+              let description = '';
+              
+              if (condition.includes('rain')) {
+                description = 'The weather is rainy today. Don\'t forget your umbrella!';
+              } else if (condition.includes('cloud')) {
+                description = 'The weather is looking great for your outdoor meeting.';
+              } else if (condition.includes('clear') || condition.includes('sun')) {
+                description = 'It\'s a beautiful sunny day. Perfect for outdoor activities!';
+              } else if (condition.includes('snow')) {
+                description = 'It\'s snowing outside. Stay warm!';
+              } else if (temp > 30) {
+                description = 'It\'s quite hot today. Stay hydrated!';
+              } else if (temp < 10) {
+                description = 'It\'s cold outside. Bundle up!';
+              } else {
+                description = 'The weather is pleasant today.';
+              }
+              
+              onWeatherUpdate(description);
+            }
             setLoading(false);
           },
           (error) => {
@@ -114,32 +144,34 @@ function WeatherWidget() {
 
   return (
     <motion.div
-      className="glass rounded-2xl p-4 md:p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 group"
+      className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 group"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       whileHover={{ scale: 1.02, y: -2 }}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 mb-2">
-            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-4">
+            <svg className="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" />
             </svg>
-            <p className="text-white/80 text-xs font-medium truncate">{weather?.location}</p>
+            <span className="text-white/60 text-sm font-medium">{weather?.location || 'NYC'}</span>
           </div>
-          <p className="text-4xl md:text-5xl font-bold text-white mb-2 text-shadow">
-            {weather?.temperature}°
+          <p className="text-5xl font-bold text-white mb-2">
+            {weather?.temperature}°F
           </p>
-          <p className="text-white/95 text-sm md:text-base font-medium">{weather?.condition}</p>
+          <p className="text-white text-lg font-medium">{weather?.condition}</p>
+          <p className="text-white/60 text-sm mt-1">
+            H: {weather ? weather.temperature + 3 : 76}° L: {weather ? weather.temperature - 3 : 65}°
+          </p>
         </div>
-        <div className="shrink-0 ml-2 md:ml-3">
+        <div className="shrink-0">
           {weather?.icon && (
             <img
-              src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+              src={`https://openweathermap.org/img/wn/${weather.icon}@4x.png`}
               alt={weather.condition}
-              className="w-16 h-16 md:w-20 md:h-20 drop-shadow-lg"
+              className="w-24 h-24 drop-shadow-lg"
             />
           )}
         </div>

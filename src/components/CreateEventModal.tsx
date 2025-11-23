@@ -252,7 +252,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }: CreateEventModalP
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-800">Create New Event</h2>
+                <h2 className="text-2xl m-2 p-2.5 font-bold border-0 bg-transparent text-gray-800">Create New Event</h2>
                 <button
                   onClick={handleClose}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
