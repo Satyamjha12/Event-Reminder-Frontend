@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from '../lib/axios';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,18 +17,12 @@ interface Event {
 }
 
 function Home() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [greeting, setGreeting] = useState('');
   const [weatherDescription, setWeatherDescription] = useState('');
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   // Get time-based greeting
   useEffect(() => {
@@ -70,6 +64,9 @@ function Home() {
     const name = user.email.split('@')[0];
     return name.charAt(0).toUpperCase() + name.slice(1);
   };
+
+  // Suppress unused variable warning - keeping for future use
+  console.debug('Home component loaded');
 
   const containerVariants = {
     hidden: { opacity: 0 },

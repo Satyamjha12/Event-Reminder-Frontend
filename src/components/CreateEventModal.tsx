@@ -1,4 +1,5 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axiosInstance from '../lib/axios';
 
@@ -62,7 +63,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }: CreateEventModalP
         duration: 0.2
       }
     }
-  };
+  } as const;
 
   // Handle input changes
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

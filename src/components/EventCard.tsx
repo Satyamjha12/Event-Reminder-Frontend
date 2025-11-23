@@ -11,42 +11,6 @@ interface EventCardProps {
 }
 
 function EventCard({ event }: EventCardProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    // Check if event is today
-    if (date.toDateString() === today.toDateString()) {
-      return 'Today, ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }
-    // Check if event is tomorrow
-    if (date.toDateString() === tomorrow.toDateString()) {
-      return 'Tomorrow';
-    }
-    // Check if event is this week
-    const daysUntil = Math.ceil((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    if (daysUntil >= 0 && daysUntil <= 7) {
-      return 'This Week';
-    }
-    
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
   const formatTimeRange = (dateString: string) => {
     const date = new Date(dateString);
     const endDate = new Date(date.getTime() + 90 * 60000); // Add 90 minutes
